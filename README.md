@@ -32,17 +32,77 @@ By using three variable K-Map, we can get the simplified expression for next sta
  
 The maximum possible groupings of adjacent ones are already shown in the figure. Therefore, the simplified expression for next state Qt+1t+1 is Q(t+1)=S+R′Q(t)Q(t+1)=S+R′Q(t)
 
-**Procedure**
-
-/* write all the steps invloved */
 
 **PROGRAM**
 
-/* Program for flipflops and verify its truth table in quartus using Verilog programming. Developed by: RegisterNumber:
+SR USING CASE:
+
+```
+module sr_ff (s, r, clk, rst, q);
+  input s, r, clk, rst;
+  output reg q;
+
+  always @(posedge clk or posedge rst)
+ begin
+    if (rst)
+      q <= 0; // Reset the flip-flop
+    else
+ begin
+      case ({s, r}) // S and R control the behavior
+        2'b00: q <= q;    // No change
+        2'b01: q <= 0;    // Reset
+        2'b10: q <= 1;    // Set
+        2'b11: q <= 0;    // Invalid state, typically treated as reset
+      endcase
+    end
+  end
+endmodule
+The 2'b11 state for SR flip-flops is considered invalid because it implies setting and resetting the flip-flop simultaneously, which is logically contradictory. To avoid unpredictable behavior or contention in the circuit, this state is often treated as a reset (or sometimes as a "no change" state) to ensure stability.
+
+```
+
+(or)
+
+SR FLIPFLOP:
+
+```
+
+module sr_ff(s,r,clk,q,qbar);
+input s,r,clk;
+output reg q;
+output reg qbar;
+initial 
+begin
+q=0;
+qbar=1;
+end
+always @(posedge clk)
+begin
+   q=s|(~r&q);
+   qbar=r|(~s&~q);
+end
+endmodule
+
+```
+
+/* Program for flipflops and verify its truth table in quartus using Verilog programming.
+
+Developed by: Maebicen Kirubakar C
+
+RegisterNumber: 24001839
+
 */
 
 **RTL LOGIC FOR FLIPFLOPS**
 
+![WhatsApp Image 2024-12-26 at 21 39 51_a5a0cf82](https://github.com/user-attachments/assets/45d053ae-ec00-4c5e-bf20-2c47e331b6bc)
+
+
 **TIMING DIGRAMS FOR FLIP FLOPS**
 
-**RESULTS**
+![WhatsApp Image 2024-12-26 at 21 39 52_24c807ff](https://github.com/user-attachments/assets/9fa23525-53a1-4f29-96e1-655d0891cdce)
+
+
+**RESULT**
+
+implemented the SR flipflop using verilog and validating their functionality using their functional tables
